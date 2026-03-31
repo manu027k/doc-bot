@@ -5,18 +5,18 @@ const { google } = require("googleapis");
 const SCOPES = ["https://www.googleapis.com/auth/documents"];
 const TOKEN_PATH = "token.json";
 
-// Load credentials
+// Load credentials file (local only)
 const credentials = JSON.parse(fs.readFileSync("credentials.json"));
-const { client_id, client_secret } = credentials.installed;
+const { client_id, client_secret, redirect_uris } = credentials.installed;
 
-// 👇 FIXED REDIRECT (no localhost issue)
+// Use OOB flow
 const oAuth2Client = new google.auth.OAuth2(
   client_id,
   client_secret,
   "urn:ietf:wg:oauth:2.0:oob"
 );
 
-// Generate URL
+// Generate auth URL
 const authUrl = oAuth2Client.generateAuthUrl({
   access_type: "offline",
   scope: SCOPES,
@@ -25,7 +25,7 @@ const authUrl = oAuth2Client.generateAuthUrl({
 console.log("\nOpen this URL in browser:\n");
 console.log(authUrl);
 
-// Input code
+// Read code from terminal
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
